@@ -12,7 +12,6 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F4F7FA;
 }
 
 .register-container {
@@ -27,19 +26,18 @@ body, html {
 
 .register-image-logo-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     width: 50%;
     border-radius: 10px 0 0 10px;
     padding: 0;
-    background-color: #EAF4F8;
 }
 
 .register-image-logo-container img {
-    max-width: 80%;
+    max-width: 100%;
     height: auto;
     object-fit: contain;
-    align-self: center;
+    align-self: flex-start;
     border-radius: 0;
 }
 
@@ -71,23 +69,20 @@ body, html {
 
 .register-button-container {
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-top: 1rem;
 }
 
 .register-button-container button {
     width: 100%;
-    padding: 0.5rem;
+    height: 5vh;
+    padding: 0.75rem;
     background-color: #81B1C3;
     color: white;
     border: none;
     cursor: pointer;
-    border-radius: 0;          /* botão quadrado */
-    font-size: 1rem;
-    font-weight: bold;
-}
-
-.register-button-container button:hover {
-    background-color: #5a8fa2;
 }
 
 .register-redirect-options {

@@ -10,5 +10,14 @@ public class SecureLoginController {
     public String login() {
         return "login";
     }
-    
+
+    @GetMapping("/register")
+    public String register() {
+        return "register";
+    }
+
+    @GetMapping("/api/email/recoverypassword")
+    public String recoverPassword() {
+        return "recover-password";
+    }
 }

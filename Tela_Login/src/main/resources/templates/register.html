@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="https://thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register page</title>
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+<body> 
+    <div class ="register-container">
+        <div class="register-image-logo-container">
+            <img th:src="@{/images/tobias.jpg}" alt="Tobias"> 
+        </div>
+        <div class="register-form">
+            <form th:action="@{/register}" method="post" class="register-form">
+                <h4 class="register-title">Registro</h4>
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="password" id="password" name="password" placeholder="Senha" required>
+                <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirmar Senha" required>
+                <div class="register-button-container">
+                    <button type="submit">Registrar</button>
+                </div>
+                <p class="register-redirect-options">
+                    Já tem cadastro? <br>
+                    <a href="/login">Faça login</a>
+                    <a href="/recoverpassword">Esqueceu sua senha?</a>
+                </p>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
