@@ -1,0 +1,196 @@
+# REST API do Zero — Teoria e Prática com Spring Boot
+
+## Parte 1 — Teoria
+
+### O que é REST?
+
+REST (*Representational State Transfer*) é um **estilo de arquitetura** para construir APIs. Não é um protocolo nem uma biblioteca — é um conjunto de convenções.
+
+**Ideia central:** tudo na sua aplicação é um **recurso** (um produto, um aluno, um pedido), e cada recurso tem uma **URL** que o representa.
+
+```
+/produtos          → coleção de produtos
+/produtos/1        → o produto com id 1
+```
+
+### Os verbos HTTP (o que fazer com o recurso)
+
+| Verbo | Ação | Exemplo |
+| --- | --- | --- |
+| GET | Ler / buscar | `GET /produtos/1` |
+| POST | Criar | `POST /produtos` |
+| PUT | Atualizar (substituir tudo) | `PUT /produtos/1` |
+| PATCH | Atualizar parcialmente | `PATCH /produtos/1` |
+| DELETE | Remover | `DELETE /produtos/1` |
+
+### Status codes (o que a API responde)
+
+| Faixa | Significado | Exemplos comuns |
+| --- | --- | --- |
+| 2xx | Sucesso | 200 OK, 201 Created, 204 No Content |
+| 4xx | Erro do cliente | 400 Bad Request, 404 Not Found |
+| 5xx | Erro do servidor | 500 Internal Server Error |
+
+### Princípios importantes
+
+- **Stateless**: o servidor não guarda "sessão" do cliente entre requisições. Cada requisição carrega tudo que precisa.
+- **JSON como formato padrão**: quase toda API REST hoje troca dados em JSON.
+- **URLs representam substantivos, não ações**: `POST /produtos` (certo) em vez de `GET /criarProduto` (errado).
+
+---
+
+## Parte 2 — Prática: uma API de produtos, do zero
+
+### 1. A classe Model — o formato do dado
+
+```java
+public class Produto {
+    private Long id;
+    private String nome;
+    private double preco;
+
+    public Produto() {}
+
+    public Produto(Long id, String nome, double preco) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public double getPreco() { return preco; }
+    public void setPreco(double preco) { this.preco = preco; }
+}
+```
+
+**Pra que serve:** é só a "forma" do objeto que a API vai manipular. O construtor vazio é obrigatório — o Spring usa ele por trás dos panos pra transformar o JSON recebido em objeto Java. Os `getters/setters` são o jeito de ler e alterar cada campo de fora da classe.
+
+### 2. O Controller — onde a mágica acontece
+
+```java
+@RestController
+@RequestMapping("/produtos")
+public class ProdutoController {
+
+    private final List<Produto> produtos = new ArrayList<>();
+    private Long proximoId = 1L;
+```
+
+- `@RestController` — avisa o Spring que essa classe responde requisições HTTP e devolve dados (JSON), não uma página HTML renderizada.
+- `@RequestMapping("/produtos")` — define o prefixo de URL de toda rota dentro da classe.
+- `private final List<Produto> produtos` é o nosso "banco de dados" temporário, guardado só na memória enquanto a aplicação roda.
+- `proximoId` é um contador manual pra simular um id auto-incrementado.
+
+#### GET — listar tudo
+
+```java
+    @GetMapping
+    public List<Produto> listar() {
+        return produtos;
+    }
+```
+
+`@GetMapping` mapeia esse método pra requisições GET em `/produtos`. O Spring pega a lista Java e converte automaticamente pra JSON na resposta (usando uma biblioteca chamada Jackson, que já vem no Spring Boot) — você não escreve JSON na mão.
+
+#### GET — buscar um por id
+
+```java
+    @GetMapping("/{id}")
+    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
+        for (Produto p : produtos) {
+            if (p.getId().equals(id)) {
+                return ResponseEntity.ok(p);
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+```
+
+- `"/{id}"` cria uma parte variável na URL. Se alguém acessa `/produtos/3`, o `3` vira o valor de `id`.
+- `@PathVariable Long id` pega esse valor da URL e joga na variável `id` do método.
+- `ResponseEntity<Produto>` é um "envelope" pra resposta: permite escolher o status code junto com o corpo. `ResponseEntity.ok(p)` → 200 com o produto. `ResponseEntity.notFound().build()` → 404 sem corpo.
+
+#### POST — criar
+
+```java
+    @PostMapping
+    public ResponseEntity<Produto> criar(@RequestBody Produto novoProduto) {
+        novoProduto.setId(proximoId++);
+        produtos.add(novoProduto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(novoProduto);
+    }
+```
+
+- `@RequestBody Produto novoProduto` — pega o JSON que veio no corpo da requisição (ex: `{"nome": "Teclado", "preco": 150.0}`) e transforma automaticamente num objeto `Produto`.
+- Ignoramos o `id` vindo do cliente e geramos um novo, simulando o comportamento de um banco de verdade.
+- `HttpStatus.CREATED` é o status **201**, correto semanticamente pra "recurso criado com sucesso" (diferente do 200 genérico).
+
+#### PUT — atualizar
+
+```java
+    @PutMapping("/{id}")
+    public ResponseEntity<Produto> atualizar(@PathVariable Long id, @RequestBody Produto dadosAtualizados) {
+        for (Produto p : produtos) {
+            if (p.getId().equals(id)) {
+                p.setNome(dadosAtualizados.getNome());
+                p.setPreco(dadosAtualizados.getPreco());
+                return ResponseEntity.ok(p);
+            }
+        }
+        return ResponseEntity.notFound().build();
+    }
+```
+
+Combina os dois conceitos anteriores: pega o `id` da URL pra achar o produto, e o corpo (`@RequestBody`) com os dados novos pra sobrescrever.
+
+#### DELETE — remover
+
+```java
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        boolean removido = produtos.removeIf(p -> p.getId().equals(id));
+        if (removido) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
+}
+```
+
+- `ResponseEntity<Void>` — não devolve corpo nenhum na resposta, só o status.
+- `ResponseEntity.noContent().build()` → **204**, o status padrão pra "deu certo, mas não tem nada pra mostrar de volta".
+- `removeIf` é um método de `List` que remove todo item que bate com a condição, e devolve `true`/`false` dizendo se removeu algo — usado aqui pra decidir entre 204 e 404.
+
+### 3. Testando
+
+Com a aplicação rodando (`http://localhost:8080`), use Postman, Insomnia ou Thunder Client:
+
+```
+GET    /produtos                                        → lista vazia []
+POST   /produtos   body: {"nome":"Mouse","preco":80}     → 201, devolve o produto com id:1
+GET    /produtos/1                                       → 200, devolve o produto
+PUT    /produtos/1 body: {"nome":"Mouse Gamer","preco":120} → 200, atualizado
+DELETE /produtos/1                                       → 204
+GET    /produtos/1                                       → 404
+```
+
+### Resumo do fluxo de uma requisição
+
+**URL + verbo** → Spring acha o método certo (via `@GetMapping`/`@PostMapping`/etc.) → `@PathVariable`/`@RequestBody` alimentam os parâmetros do método → o código mexe na lista → `ResponseEntity` decide o status e o corpo que voltam pro cliente.
+
+---
+
+## Parte 3 — Caminho de aprendizado sugerido
+
+1. ✅ Teoria — recurso, verbos, status codes
+2. ✅ CRUD em memória — como o exemplo acima, sem banco
+3. Testar tudo no Postman antes de conectar a um front-end
+4. Introduzir um banco simples (H2, em memória, zero configuração) com Spring Data JPA
+5. Migrar para um banco real (PostgreSQL ou MySQL) — a lógica do Controller quase não muda
+
+O pulo do gato: o Controller quase não muda quando você troca a lista em memória por um banco de verdade — só troca de onde os dados vêm (`List<Produto>` → `ProdutoRepository`). Por isso faz sentido aprender REST primeiro, banco depois.
