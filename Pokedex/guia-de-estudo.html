@@ -1,0 +1,451 @@
+<title>Guia React da Prova</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: índice fixo à esquerda no desktop, coluna única de leitura; cada seção = um tema da prova */
+:root{
+  --bg:#f6f8f9; --surface:#ffffff; --fg:#17232a; --muted:#56656d; --line:#dbe3e7;
+  --accent:#0a7487; --accent-soft:#e2f2f5; --code-bg:#eef3f5; --warn:#a35a00; --warn-soft:#fbf0e0;
+  --f-display:"Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --f-body:"Source Sans 3", "Segoe UI", Arial, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f171b; --surface:#152127; --fg:#e3ecef; --muted:#97a8b0; --line:#26363e;
+  --accent:#5ccfe2; --accent-soft:#163a42; --code-bg:#1a2a31; --warn:#f0b061; --warn-soft:#3a2a14; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f171b; --surface:#152127; --fg:#e3ecef; --muted:#97a8b0; --line:#26363e;
+  --accent:#5ccfe2; --accent-soft:#163a42; --code-bg:#1a2a31; --warn:#f0b061; --warn-soft:#3a2a14; color-scheme:dark}
+
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:17px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;padding-block:40px 80px}
+nav.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 24px);align-self:start;font-size:14.5px}
+nav.toc p{font-family:var(--f-display);font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted);margin:0 0 8px}
+nav.toc ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+nav.toc a{display:block;padding:4px 10px;border-radius:6px;color:var(--fg);text-decoration:none}
+nav.toc a:hover,nav.toc a:focus-visible{background:var(--accent-soft);color:var(--accent);outline:none}
+main{min-width:0}
+header.top{margin-bottom:36px}
+.eyebrow{font-family:var(--f-mono);font-size:13px;color:var(--accent);margin:0 0 8px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(32px,5vw,46px);font-weight:700}
+h2{font-size:27px;font-weight:700;margin-bottom:14px}
+h3{font-size:19px;font-weight:700;margin:26px 0 8px}
+header.top p.lead{font-size:19px;color:var(--muted);max-width:62ch;margin:14px 0 0}
+section{padding-block:34px;border-top:1px solid var(--line)}
+section > p, section li{max-width:68ch}
+p{margin:0 0 12px}
+ul{padding-left:20px;margin:0 0 12px}
+li{margin-bottom:4px}
+code{font-family:var(--f-mono);font-size:.86em;background:var(--code-bg);padding:1px 5px;border-radius:4px}
+pre{font-family:var(--f-mono);font-size:13.5px;line-height:1.55;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:14px 16px;overflow-x:auto;margin:10px 0 16px}
+pre code{background:none;padding:0;font-size:inherit}
+.c{color:var(--muted)}
+.key{background:var(--accent-soft);border-radius:8px;padding:14px 18px;margin:14px 0 18px;max-width:68ch}
+.key strong{color:var(--accent)}
+.warn{background:var(--warn-soft);border-radius:8px;padding:14px 18px;margin:14px 0 18px;max-width:68ch}
+.warn strong{color:var(--warn)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin:12px 0 16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;min-width:0}
+.box h4{font-family:var(--f-display);font-size:16px;margin:0 0 6px}
+.box p{margin:0;font-size:15.5px;color:var(--muted)}
+.tbl{overflow-x:auto;margin:12px 0 16px;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-size:15px;background:var(--surface)}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--f-display);font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600;white-space:nowrap}
+details{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:0 16px;margin-bottom:8px;max-width:72ch}
+summary{cursor:pointer;padding:12px 0;font-weight:600;list-style-position:outside}
+summary:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:4px}
+details[open] summary{border-bottom:1px solid var(--line);margin-bottom:10px}
+details > div{padding-bottom:12px}
+.tag{display:inline-block;font-family:var(--f-mono);font-size:12px;padding:1px 7px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin:0 4px 4px 0;white-space:nowrap}
+a{color:var(--accent)}
+@media (max-width:860px){
+  .wrap{grid-template-columns:minmax(0,1fr);gap:16px;padding-block:24px 60px}
+  nav.toc{position:static}
+  nav.toc ol{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .grid2{grid-template-columns:minmax(0,1fr)}
+}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Índice">
+  <p>Índice</p>
+  <ol>
+    <li><a href="#resumo">Resumo de 1 minuto</a></li>
+    <li><a href="#vite">Vite e estrutura</a></li>
+    <li><a href="#componentes">Componentes e props</a></li>
+    <li><a href="#hooks">Hooks</a></li>
+    <li><a href="#listas">Listas, eventos, forms</a></li>
+    <li><a href="#fetch">Consumindo APIs</a></li>
+    <li><a href="#env">.env e segredos</a></li>
+    <li><a href="#router">React Router</a></li>
+    <li><a href="#context">Context (login)</a></li>
+    <li><a href="#supabase">Supabase</a></li>
+    <li><a href="#i18n">i18n</a></li>
+    <li><a href="#projetos">Os 24 projetos</a></li>
+    <li><a href="#quiz">Perguntas de revisão</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="top">
+  <p class="eyebrow">PROJETOS/React · Prof. João Paulo Aramuni</p>
+  <h1>Guia React da Prova</h1>
+  <p class="lead">Tudo que se repete nos 24 projetos da pasta, explicado com o código do próprio professor. Leia na ordem; no fim tem perguntas para testar.</p>
+</header>
+
+<section id="resumo">
+  <h2>Resumo de 1 minuto</h2>
+  <p>Se você só tiver tempo para isto, decore estes pontos:</p>
+  <ul>
+    <li>Todos os projetos são <strong>React + Vite</strong>, com a mesma organização de pastas: <code>components</code>, <code>pages</code>, <code>hooks</code>, <code>services</code>, <code>config</code>, <code>utils</code>.</li>
+    <li>Os hooks que mais aparecem: <code>useState</code> (333 vezes), <code>useEffect</code> (165), <code>useRef</code> (122), <code>useCallback</code> (85) e <code>useMemo</code> (67).</li>
+    <li>Muitos projetos são versões em React de projetos <strong>Spring Boot</strong>. A ideia é sempre a mesma: o que o servidor fazia, agora o <strong>navegador</strong> faz.</li>
+    <li>Variável que começa com <code>VITE_</code> vai para o navegador e qualquer um pode ver. Chave secreta <strong>nunca</strong> tem <code>VITE_</code>: ela fica na pasta <code>api/</code> (Vercel Functions).</li>
+    <li>Busca de dados: <code>fetch</code> dentro de <code>useEffect</code>, com estados <em>loading / sucesso / erro</em> e uma função de limpeza (cleanup).</li>
+    <li>Rotas: <code>BrowserRouter</code> + <code>Routes</code> + <code>Route</code>; parâmetros com <code>useParams</code>; rota protegida com <code>&lt;Navigate&gt;</code>.</li>
+    <li>Banco sem back-end: <strong>Supabase</strong> com chave publicável, protegido por <strong>RLS</strong>.</li>
+  </ul>
+</section>
+
+<section id="vite">
+  <h2>Vite e estrutura do projeto</h2>
+  <p>O Vite cria e roda o projeto. Os comandos que aparecem em todos os READMEs:</p>
+<pre><code>npm create vite@latest meu-app   <span class="c"># cria (escolha React + JavaScript)</span>
+npm install                      <span class="c"># instala as dependências do package.json</span>
+npm run dev                      <span class="c"># roda em http://localhost:5173</span>
+npm run build                    <span class="c"># gera a pasta dist/ para publicar</span>
+npm run preview                  <span class="c"># testa o build localmente</span></code></pre>
+
+  <h3>Como o app começa (main.jsx)</h3>
+<pre><code>import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./App.jsx";
+
+createRoot(document.getElementById("root")).render(
+  &lt;StrictMode&gt;
+    &lt;App /&gt;
+  &lt;/StrictMode&gt;
+);</code></pre>
+  <p>O <code>index.html</code> tem uma <code>&lt;div id="root"&gt;</code>. O React desenha o <code>&lt;App /&gt;</code> dentro dela.</p>
+  <div class="warn"><strong>Pegadinha do StrictMode:</strong> no <code>npm run dev</code>, ele roda cada <code>useEffect</code> <em>duas vezes</em> de propósito, para achar bugs. Em produção roda uma vez. O AraUrlShortener guarda a Promise num <code>Map</code> para não contar dois cliques no link.</div>
+
+  <h3>Pastas padrão (igual em quase todos)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Pasta</th><th>Para que serve</th></tr></thead>
+    <tbody>
+      <tr><td>components/</td><td>Peças da tela reutilizáveis. Cada uma na sua pasta, com <code>.jsx</code> e <code>.css</code></td></tr>
+      <tr><td>pages/</td><td>Telas inteiras, uma por rota (Home, Login, NotFound)</td></tr>
+      <tr><td>hooks/</td><td>Hooks customizados (<code>useTheme</code>, <code>useDebouncedValue</code>, <code>useFavoritos</code>)</td></tr>
+      <tr><td>services/</td><td>Regras de negócio e chamadas a APIs. Equivale ao <em>Service</em> do Spring</td></tr>
+      <tr><td>repository/</td><td>Acesso ao banco (Supabase). Equivale ao <em>Repository</em> do Spring</td></tr>
+      <tr><td>model/</td><td>Classes dos dados (<code>Pokemon.js</code>, <code>Url.js</code>)</td></tr>
+      <tr><td>config/</td><td>Constantes e configurações (<code>appConfig.js</code>, <code>supabaseClient.js</code>)</td></tr>
+      <tr><td>utils/ e core/</td><td>Funções auxiliares: formatar, copiar, localStorage, exceções</td></tr>
+      <tr><td>data/</td><td>JSON local (ex.: <code>pokedex-data.json</code>)</td></tr>
+      <tr><td>api/ (fora do src)</td><td>Código que roda no <strong>servidor</strong> (Vercel Functions), onde ficam as chaves secretas</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<section id="componentes">
+  <h2>Componentes, JSX e props</h2>
+  <p>Um componente é uma <strong>função que devolve JSX</strong> (HTML dentro do JavaScript). O nome começa com letra maiúscula. Ele recebe dados do pai por <strong>props</strong>, que são só leitura.</p>
+<pre><code><span class="c">// Pai passa dados por props</span>
+&lt;PokemonCard pokemon={p} isFavorite={true} onOpen={abrir} /&gt;
+
+<span class="c">// Filho recebe com desestruturação</span>
+export default function PokemonCard({ pokemon, isFavorite, onOpen }) {
+  return (
+    &lt;li className="card" onClick={() =&gt; onOpen(pokemon.id)}&gt;
+      {pokemon.name} {isFavorite &amp;&amp; "★"}
+    &lt;/li&gt;
+  );
+}</code></pre>
+  <ul>
+    <li>No JSX é <code>className</code>, não <code>class</code>. Expressões JS vão entre <code>{ }</code>.</li>
+    <li>Condicional: <code>{cond &amp;&amp; &lt;X/&gt;}</code> ou <code>{cond ? &lt;A/&gt; : &lt;B/&gt;}</code>.</li>
+    <li><strong>children</strong>: o que fica entre as tags. Usado no <code>PageLayout</code> e no <code>ProtectedRoute</code>: <code>&lt;ProtectedRoute&gt;&lt;Home/&gt;&lt;/ProtectedRoute&gt;</code>.</li>
+    <li>O filho avisa o pai chamando uma <strong>função recebida por props</strong> (<code>onOpen</code>, <code>onToggleFavorite</code>). Os dados descem, os eventos sobem.</li>
+  </ul>
+</section>
+
+<section id="hooks">
+  <h2>Hooks</h2>
+  <p>Regra: hooks só podem ser chamados no topo do componente (nunca dentro de <code>if</code> ou loop) e só em componentes ou outros hooks.</p>
+
+  <h3>useState: guardar um valor que muda a tela</h3>
+<pre><code>const [busca, setBusca] = useState("");
+setBusca("pikachu");                         <span class="c">// re-renderiza</span>
+setOrdem(atual =&gt; ({ ...atual, direcao: "desc" })); <span class="c">// forma com função: usa o valor anterior</span></code></pre>
+  <p>Nunca altere o estado direto (<code>busca = "x"</code> ou <code>lista.push()</code>). Sempre use o <code>set</code> com um valor novo (por isso o <code>...spread</code>).</p>
+
+  <h3>useEffect: efeitos colaterais (fetch, timers, eventos)</h3>
+<pre><code>useEffect(() =&gt; {
+  const timer = setTimeout(() =&gt; setDebounced(value), delay);
+  return () =&gt; clearTimeout(timer);   <span class="c">// cleanup: roda antes do próximo efeito e ao desmontar</span>
+}, [value, delay]);                   <span class="c">// dependências</span></code></pre>
+  <div class="grid2">
+    <div class="box"><h4><code>[]</code> vazio</h4><p>Roda uma vez, quando o componente aparece.</p></div>
+    <div class="box"><h4><code>[a, b]</code></h4><p>Roda de novo sempre que <code>a</code> ou <code>b</code> mudar.</p></div>
+    <div class="box"><h4>Sem array</h4><p>Roda depois de toda renderização.</p></div>
+    <div class="box"><h4><code>return () =&gt; {}</code></h4><p>Limpeza: cancela timer, fetch (AbortController) ou removeEventListener.</p></div>
+  </div>
+
+  <h3>useRef: valor que NÃO re-renderiza</h3>
+  <p>Dois usos nos projetos: (1) pegar um elemento do DOM, (2) guardar algo entre renderizações sem redesenhar a tela.</p>
+<pre><code>const containerRef = useRef(null);
+&lt;div ref={containerRef} /&gt;            <span class="c">// MapBoxAPI: o mapa é criado dentro desta div</span>
+const abortRef = useRef(null);
+abortRef.current?.abort();            <span class="c">// cancela a busca anterior</span></code></pre>
+
+  <h3>useMemo e useCallback: evitar recálculo</h3>
+<pre><code><span class="c">// useMemo guarda um VALOR calculado (Pokedex: lista filtrada é estado derivado)</span>
+const resultado = useMemo(
+  () =&gt; sortPokemon(filterPokemon(lista, { busca, tipo }), ordem),
+  [lista, busca, tipo, ordem]
+);
+<span class="c">// useCallback guarda uma FUNÇÃO (não é recriada a cada render)</span>
+const limpar = useCallback(() =&gt; { setBusca(""); setTipo(null); }, []);</code></pre>
+  <div class="key"><strong>Estado derivado:</strong> a lista filtrada não vai num <code>useState</code>. Ela é calculada a partir da lista base + filtros. É o padrão do <code>usePokedexFilters</code>.</div>
+
+  <h3>Hooks customizados</h3>
+  <p>Uma função que começa com <code>use</code> e usa outros hooks. Serve para reaproveitar lógica. Exemplos da pasta: <code>useTheme</code>, <code>useDebouncedValue</code>, <code>useRequest</code>, <code>useGitHub</code>, <code>useFavoritos</code>, <code>usePokedexFilters</code>, <code>useFiltrosDaUrl</code>.</p>
+</section>
+
+<section id="listas">
+  <h2>Listas, eventos e formulários</h2>
+  <h3>Listas com map e key</h3>
+<pre><code>{pokemons.map((pokemon) =&gt; (
+  &lt;PokemonCard key={pokemon.id} pokemon={pokemon} /&gt;
+))}</code></pre>
+  <p>A <code>key</code> precisa ser única e estável (o <code>id</code>). Ela diz ao React qual item é qual quando a lista muda. Evite usar o índice do array. Para filtrar, use <code>.filter()</code> antes do <code>.map()</code>.</p>
+
+  <h3>Eventos e formulário controlado</h3>
+<pre><code>const [url, setUrl] = useState("");
+
+function handleSubmit(e) {
+  e.preventDefault();          <span class="c">// impede a página de recarregar</span>
+  encurtar(url);
+}
+
+&lt;form onSubmit={handleSubmit}&gt;
+  &lt;input value={url} onChange={(e) =&gt; setUrl(e.target.value)} /&gt;
+  &lt;button type="submit"&gt;Encurtar&lt;/button&gt;
+&lt;/form&gt;</code></pre>
+  <p>"Controlado" quer dizer que o valor do input vem do estado (<code>value</code>) e cada tecla atualiza o estado (<code>onChange</code>). Eventos em camelCase: <code>onClick</code>, <code>onChange</code>, <code>onSubmit</code>. Passe a função, não chame: <code>onClick={abrir}</code> e não <code>onClick={abrir()}</code>.</p>
+
+  <h3>localStorage e sessionStorage</h3>
+<pre><code>localStorage.setItem("tema", JSON.stringify(valor));
+const salvo = JSON.parse(localStorage.getItem("tema"));</code></pre>
+  <p><code>localStorage</code> fica para sempre; <code>sessionStorage</code> some ao fechar a aba (usado na sessão de login). Só guarda texto, por isso o <code>JSON.stringify</code>. Os projetos colocam em <code>try/catch</code> porque pode falhar em aba anônima.</p>
+</section>
+
+<section id="fetch">
+  <h2>Consumindo APIs</h2>
+  <p>O padrão básico, igual ao <code>useGitHub</code>:</p>
+<pre><code>const [state, setState] = useState({ status: "loading", data: null, error: null });
+
+useEffect(() =&gt; {
+  let active = true;
+  setState({ status: "loading", data: null, error: null });
+
+  fetcher(username)
+    .then((data) =&gt; active &amp;&amp; setState({ status: "ready", data, error: null }))
+    .catch((error) =&gt; active &amp;&amp; setState({ status: "error", data: null, error }));
+
+  return () =&gt; { active = false; };   <span class="c">// ignora resposta antiga</span>
+}, [fetcher, username]);</code></pre>
+
+  <p>Com <code>async/await</code>:</p>
+<pre><code>async function buscar() {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return await response.json();
+}</code></pre>
+  <div class="warn"><strong>Pegadinha clássica:</strong> o <code>fetch</code> só dá erro (cai no catch) se não houver rede. Um 404 ou 500 chega "normal". Por isso sempre confira <code>response.ok</code>.</div>
+
+  <h3>As 5 técnicas do ConsultaBrasil (o projeto que mais ensina fetch)</h3>
+  <div class="tbl"><table>
+    <thead><tr><th>Técnica</th><th>O que resolve</th><th>Como</th></tr></thead>
+    <tbody>
+      <tr><td>Debounce</td><td>Não fazer 1 requisição por tecla</td><td><code>setTimeout</code> no useEffect + <code>clearTimeout</code> no cleanup</td></tr>
+      <tr><td>Cancelamento</td><td>Condição de corrida: resposta velha chegar depois da nova</td><td><code>new AbortController()</code>, <code>fetch(url, {"{"} signal {"}"})</code>, <code>controller.abort()</code> no cleanup</td></tr>
+      <tr><td>Timeout</td><td>fetch espera para sempre</td><td><code>setTimeout</code> que chama <code>abort()</code></td></tr>
+      <tr><td>Erros</td><td>Mensagem útil para cada caso</td><td>Classes de erro: <code>NotFoundError</code>, <code>TimeoutError</code>, <code>RateLimitError</code> (429)</td></tr>
+      <tr><td>Cache e fallback</td><td>Não buscar duas vezes; API reserva se a principal cair</td><td><code>new Map()</code> com a URL como chave; tenta ViaCEP, depois BrasilAPI</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>CORS:</strong> o navegador só pode chamar uma API de outro domínio se ela permitir. ViaCEP, IBGE, BrasilAPI e ESPN permitem, então são chamadas direto do navegador, sem back-end.</p>
+</section>
+
+<section id="env">
+  <h2>Variáveis de ambiente e segredos</h2>
+<pre><code><span class="c"># .env.local (nunca vai para o GitHub; o .env.example é o modelo)</span>
+VITE_SUPABASE_URL=https://xxxx.supabase.co   <span class="c"># vai para o navegador</span>
+GITHUB_TOKEN=ghp_xxx                         <span class="c"># SEM VITE_: só o servidor lê</span></code></pre>
+<pre><code>const url = import.meta.env.VITE_SUPABASE_URL;   <span class="c">// no React</span>
+process.env.GITHUB_TOKEN                          <span class="c">// na api/ (servidor)</span></code></pre>
+  <div class="key"><strong>Regra de ouro:</strong> tudo com prefixo <code>VITE_</code> é embutido no JavaScript do site, e qualquer visitante consegue ler. Token do GitHub, Spotify, Gemini, Stripe (secret) e WakaTime ficam <strong>sem</strong> <code>VITE_</code>, na pasta <code>api/</code>.</div>
+
+  <h3>Como a pasta api/ funciona</h3>
+  <p>O navegador chama <code>/api/github</code> no próprio site. Quem chama o GitHub com o token é o servidor:</p>
+  <ul>
+    <li><strong>Em produção:</strong> a Vercel transforma <code>api/github.js</code> numa <em>Vercel Function</em> (serverless).</li>
+    <li><strong>No <code>npm run dev</code>:</strong> o <code>vite.config.js</code> registra um <em>middleware</em> que atende a mesma rota.</li>
+    <li>Arquivo que começa com <code>_</code> (ex.: <code>_github.js</code>) não vira rota; guarda a lógica compartilhada.</li>
+  </ul>
+  <p>Projetos com <code>api/</code>: GitHubAPI, ContributorStats, SpotifyAPI, GeminiAPI, StripeAPI, StripeAPI_2, WakaTimeAPI, CanvasAPI, Captcha_React, SubtitlesGenerator.</p>
+  <div class="warn"><strong>Captcha:</strong> validar só no front não protege nada, porque um robô chama sua API direto. A secret key valida no servidor (<code>api/</code>).</div>
+</section>
+
+<section id="router">
+  <h2>React Router</h2>
+<pre><code><span class="c">// main.jsx</span>
+&lt;BrowserRouter&gt;&lt;App /&gt;&lt;/BrowserRouter&gt;
+
+<span class="c">// App.jsx</span>
+&lt;Routes&gt;
+  &lt;Route path="/" element={&lt;Navigate to="/login" replace /&gt;} /&gt;
+  &lt;Route path="/login" element={&lt;Login /&gt;} /&gt;
+  &lt;Route path="/:shortUrl" element={&lt;Redirect /&gt;} /&gt;   <span class="c">// parâmetro</span>
+  &lt;Route path="/home" element={&lt;ProtectedRoute&gt;&lt;Home /&gt;&lt;/ProtectedRoute&gt;} /&gt;
+  &lt;Route path="*" element={&lt;NotFound /&gt;} /&gt;           <span class="c">// qualquer outra = 404</span>
+&lt;/Routes&gt;</code></pre>
+  <div class="tbl"><table>
+    <thead><tr><th>Recurso</th><th>Para que</th></tr></thead>
+    <tbody>
+      <tr><td>useParams()</td><td>Lê o <code>:shortUrl</code> da URL: <code>const {"{"} shortUrl {"}"} = useParams()</code></td></tr>
+      <tr><td>useNavigate()</td><td>Navega por código, ex.: depois do login <code>navigate("/home")</code></td></tr>
+      <tr><td>&lt;Navigate /&gt;</td><td>Redireciona ao renderizar (rota protegida)</td></tr>
+      <tr><td>&lt;Link to&gt;</td><td>Link sem recarregar a página (no lugar do <code>&lt;a href&gt;</code>)</td></tr>
+      <tr><td>useSearchParams()</td><td>Lê <code>?token=...</code> (ResetPassword)</td></tr>
+    </tbody>
+  </table></div>
+  <p><strong>vercel.json com rewrites:</strong> em SPA, abrir <code>/home</code> direto daria 404 na Vercel, porque esse arquivo não existe. O rewrite manda tudo para o <code>index.html</code> e o React Router decide a tela.</p>
+<pre><code>{ "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }] }</code></pre>
+</section>
+
+<section id="context">
+  <h2>Context API (SecureLoginPUC_React)</h2>
+  <p>Context compartilha um dado com <strong>todos</strong> os componentes, sem passar props de pai em filho ("prop drilling"). Usado para o usuário logado.</p>
+<pre><code><span class="c">// 1. Criar</span>
+export const AuthContext = createContext({ usuario: null, login: async () =&gt; false, logout: () =&gt; {} });
+export const useAuth = () =&gt; useContext(AuthContext);
+
+<span class="c">// 2. Prover (envolve o App)</span>
+export default function AuthProvider({ children }) {
+  const [usuario, setUsuario] = useState(readStoredSession);
+  const value = useMemo(() =&gt; ({ usuario, login, logout }), [usuario, login, logout]);
+  return &lt;AuthContext.Provider value={value}&gt;{children}&lt;/AuthContext.Provider&gt;;
+}
+
+<span class="c">// 3. Usar em qualquer lugar</span>
+const ProtectedRoute = ({ children }) =&gt; {
+  const { usuario } = useAuth();
+  return usuario ? children : &lt;Navigate to="/login" replace /&gt;;
+};</code></pre>
+  <p>Nesse projeto não há back-end: os usuários ficam no <code>localStorage</code> (senha com hash), a sessão no <code>sessionStorage</code>, o e-mail de recuperação sai pelo <strong>EmailJS</strong> e o login tem <strong>reCAPTCHA</strong>.</p>
+</section>
+
+<section id="supabase">
+  <h2>Supabase (Pokedex, AraUrlShortener, RadioBrowser)</h2>
+  <p>Banco PostgreSQL na nuvem que o navegador acessa por HTTPS, sem servidor próprio.</p>
+<pre><code>import { createClient } from "@supabase/supabase-js";
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY
+);
+
+<span class="c">// repository</span>
+await supabase.from("favorites").insert({ pokemon_id: 25 });
+await supabase.from("favorites").select("*");
+await supabase.rpc("resolve_url", { p_short_url: code });   <span class="c">// chama função SQL</span></code></pre>
+  <ul>
+    <li><strong>Por que a chave pode ir para o navegador?</strong> A chave <em>publicável</em> (anon) não dá poder sozinha. Quem protege as tabelas é o <strong>RLS</strong> (Row Level Security): regras no banco dizendo quem pode ler e escrever.</li>
+    <li>A <code>service_role</code> / secret key <strong>nunca</strong> vai no front.</li>
+    <li>Comparação com Spring: lá era JDBC + Spring Data JPA no servidor; aqui o SDK <code>supabase-js</code> chama a Data API.</li>
+    <li>Camadas: componente → <code>service</code> (regras) → <code>repository</code> (banco).</li>
+  </ul>
+</section>
+
+<section id="i18n">
+  <h2>Internacionalização (i18n)</h2>
+<pre><code><span class="c">// src/i18n/index.js (importado uma vez no main.jsx)</span>
+i18n.use(LanguageDetector).use(initReactI18next).init({
+  resources: { "pt-BR": { translation: ptBR }, en: { translation: en } },
+  fallbackLng: "pt-BR",
+  interpolation: { escapeValue: false },   <span class="c">// React já protege contra XSS</span>
+});
+
+<span class="c">// no componente</span>
+const { t, i18n } = useTranslation();
+&lt;h1&gt;{t("layout.title")}&lt;/h1&gt;
+i18n.changeLanguage("en");   <span class="c">// troca sem recarregar</span></code></pre>
+  <p>Um <code>translation.json</code> por idioma em <code>locales/</code>. O detector lê primeiro a escolha salva no <code>localStorage</code>, depois o idioma do navegador. <code>fallbackLng</code> é o idioma usado quando não há tradução.</p>
+</section>
+
+<section id="projetos">
+  <h2>Os 24 projetos: o que cada um ensina</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>Projeto</th><th>O que faz</th><th>Conceito-chave</th></tr></thead>
+    <tbody>
+      <tr><td>Pokedex</td><td>151 Pokémon com busca, filtro por tipo, ordenação e favoritos (Atividade 03)</td><td>Componentização, props, map/key, useMemo, JSON local, Supabase</td></tr>
+      <tr><td>ConsultaBrasil</td><td>CEP, estado/cidades, CNPJ, feriados, DDD</td><td>Debounce, AbortController, timeout, cache, fallback</td></tr>
+      <tr><td>AraUrlShortener</td><td>Encurtador de URL</td><td>React Router, useParams, Supabase + RLS, vercel.json</td></tr>
+      <tr><td>SecureLoginPUC_React</td><td>Login, cadastro e recuperação de senha</td><td>Context API, rota protegida, localStorage, EmailJS, reCAPTCHA</td></tr>
+      <tr><td>RadioBrowserAPI_2</td><td>Rádios por país/estado + favoritos</td><td>API pública, <code>&lt;audio&gt;</code>, Supabase, filtros na URL</td></tr>
+      <tr><td>CandidatosTSE (1 e 2)</td><td>Lista candidatos de um CSV com filtros</td><td>PapaParse (CSV), URLSearchParams, filtros</td></tr>
+      <tr><td>GitHubAPI</td><td>Perfil, repos e contribuições</td><td>Hook genérico de fetch, api/ com token, cache Map</td></tr>
+      <tr><td>ContributorStats</td><td>Ranking de colaboradores de um repo</td><td>GitHub API, regra de negócio portada do Python</td></tr>
+      <tr><td>SpotifyAPI</td><td>Tocando agora, mais ouvidas</td><td>OAuth refresh token no servidor, polling</td></tr>
+      <tr><td>WakaTimeAPI</td><td>Tempo programando por linguagem</td><td>OAuth, api/, atualização periódica</td></tr>
+      <tr><td>CanvasAPI</td><td>Painel das disciplinas do Canvas</td><td>API REST com token no servidor</td></tr>
+      <tr><td>GeminiAPI</td><td>Chat "pergunte sobre mim"</td><td>IA no servidor, streaming de resposta</td></tr>
+      <tr><td>SubtitlesGenerator</td><td>Gera legenda .srt de vídeo</td><td>ffmpeg.wasm no navegador + Gemini</td></tr>
+      <tr><td>StripeAPI (1 e 2)</td><td>Carrinho e pagamento de teste</td><td>PaymentIntent no servidor, clientSecret, Payment Element</td></tr>
+      <tr><td>Captcha_React</td><td>8 tipos de captcha</td><td>Validação no servidor, secret key</td></tr>
+      <tr><td>Internacionalizacao_i18n</td><td>Site em pt/en/es</td><td>i18next, useTranslation</td></tr>
+      <tr><td>MapBoxAPI</td><td>Mapa das unidades da PUC</td><td>useRef para biblioteca externa, flyTo, geocoding</td></tr>
+      <tr><td>ESPN_API</td><td>Jogos, placar ao vivo, tabela</td><td>API pública com CORS, contagem regressiva</td></tr>
+      <tr><td>PixGenerator</td><td>QR Code Pix</td><td>Lógica pura no navegador (BR Code, CRC16), qrcode.react</td></tr>
+      <tr><td>CurriculumPDF</td><td>Exibe currículo em PDF</td><td>react-pdf, zoom, troca de idioma</td></tr>
+      <tr><td>SkillsGlobe</td><td>Globo 3D de habilidades</td><td><code>&lt;canvas&gt;</code>, requestAnimationFrame, useRef</td></tr>
+      <tr><td>ReactBits</td><td>Efeitos que seguem o mouse</td><td>Componentes prontos, props, StrictMode</td></tr>
+    </tbody>
+  </table></div>
+  <p>Fluxo da Stripe, que costuma cair: (1) o front manda os itens para <code>/api/stripe</code>; (2) o servidor calcula o total e cria o <strong>PaymentIntent</strong> com a secret key; (3) devolve o <code>clientSecret</code>; (4) o front chama <code>stripe.confirmPayment</code>. O total é calculado no servidor para o usuário não conseguir mudar o preço.</p>
+</section>
+
+<section id="quiz">
+  <h2>Perguntas de revisão</h2>
+  <p>Tente responder antes de abrir.</p>
+
+  <details><summary>Qual a diferença entre props e state?</summary><div>Props vêm do componente pai e são só leitura. State é do próprio componente, muda com o <code>set</code> e faz a tela re-renderizar.</div></details>
+  <details><summary>Para que serve o array de dependências do useEffect?</summary><div>Diz quando o efeito roda de novo. <code>[]</code> roda uma vez ao montar; <code>[x]</code> roda quando <code>x</code> muda; sem array roda em toda renderização.</div></details>
+  <details><summary>O que é a função de cleanup do useEffect e quando ela roda?</summary><div>É a função retornada pelo efeito. Roda antes do efeito rodar de novo e quando o componente sai da tela. Serve para cancelar timer, fetch (<code>abort()</code>) e remover event listeners.</div></details>
+  <details><summary>Qual a diferença entre useRef e useState?</summary><div>Mudar <code>ref.current</code> não re-renderiza a tela; mudar o state re-renderiza. useRef serve para acessar elementos do DOM ou guardar valores entre renderizações.</div></details>
+  <details><summary>useMemo x useCallback?</summary><div>useMemo memoriza um <strong>valor</strong> calculado (ex.: lista filtrada). useCallback memoriza uma <strong>função</strong>. Os dois só recalculam quando as dependências mudam.</div></details>
+  <details><summary>Por que a prop key é obrigatória em listas?</summary><div>Para o React identificar cada item entre renderizações e atualizar só o que mudou. Deve ser única e estável, como o <code>id</code>.</div></details>
+  <details><summary>Por que usar e.preventDefault() no onSubmit?</summary><div>O comportamento padrão do form é recarregar a página. preventDefault impede isso para o React tratar o envio.</div></details>
+  <details><summary>Por que o fetch não cai no catch com erro 404?</summary><div>O fetch só rejeita a Promise em falha de rede. Respostas HTTP de erro chegam normalmente; é preciso checar <code>response.ok</code> ou <code>response.status</code>.</div></details>
+  <details><summary>O que é debounce e por que usar?</summary><div>Esperar o usuário parar de digitar (ex.: 400 ms) antes de buscar. Evita uma requisição por tecla.</div></details>
+  <details><summary>O que é condição de corrida (race condition) num fetch e como resolver?</summary><div>Uma resposta antiga chega depois da nova e mostra o dado errado. Resolve cancelando a requisição anterior com <code>AbortController</code> no cleanup (ou ignorando com uma flag <code>active</code>).</div></details>
+  <details><summary>Qual o perigo de uma variável com prefixo VITE_?</summary><div>Ela é embutida no código do navegador e qualquer pessoa pode ler. Nunca coloque segredos nela. Segredos ficam no servidor (pasta <code>api/</code>, Vercel Functions), lidos com <code>process.env</code>.</div></details>
+  <details><summary>Como ler uma variável de ambiente no React com Vite?</summary><div><code>import.meta.env.VITE_NOME</code>, definida no arquivo <code>.env.local</code>.</div></details>
+  <details><summary>Por que a chave publicável do Supabase pode ficar no navegador?</summary><div>Porque a segurança está no <strong>RLS</strong> (Row Level Security) e nas funções SQL do banco, não na chave. A secret / service_role nunca vai para o front.</div></details>
+  <details><summary>Como pegar o parâmetro de uma rota /:shortUrl?</summary><div><code>const {"{"} shortUrl {"}"} = useParams();</code> do react-router-dom.</div></details>
+  <details><summary>Como fazer uma rota protegida?</summary><div>Um componente que lê o usuário (via Context) e devolve <code>children</code> se estiver logado, ou <code>&lt;Navigate to="/login" replace /&gt;</code> se não.</div></details>
+  <details><summary>Para que serve o Context API?</summary><div>Compartilhar dados globais (usuário logado, tema, idioma) com qualquer componente sem passar props por todos os níveis. Passos: <code>createContext</code>, <code>&lt;Provider value&gt;</code>, <code>useContext</code>.</div></details>
+  <details><summary>Por que o vercel.json tem um rewrite para /index.html?</summary><div>Numa SPA, só existe o index.html. Sem o rewrite, abrir <code>/home</code> direto ou dar F5 numa rota dá 404. O rewrite entrega o index.html e o React Router mostra a tela certa.</div></details>
+  <details><summary>Por que o efeito roda duas vezes no npm run dev?</summary><div>Por causa do <code>&lt;StrictMode&gt;</code>, que faz isso de propósito em desenvolvimento para revelar efeitos sem cleanup. Em produção roda uma vez.</div></details>
+  <details><summary>O que mudou dos projetos Spring Boot para os React?</summary><div>O trabalho saiu do servidor para o navegador: o Thymeleaf montava o HTML, agora o React desenha; JDBC/JPA virou Supabase pelo SDK; Controller virou rota do React Router; Service e Repository continuam como arquivos JS.</div></details>
+  <details><summary>Por que validar captcha no front não basta?</summary><div>Um robô pode chamar a API direto, sem passar pela tela. A validação de verdade é no servidor, com a secret key.</div></details>
+</section>
+</main>
+</div>

@@ -1,0 +1,24 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; background: #f4f6f8; color: #1d2329; }
+a { color: #2457c5; }
+button { cursor: pointer; padding: 6px 12px; border: 1px solid #2457c5; background: #fff; color: #2457c5; border-radius: 6px; }
+button.ativo { background: #2457c5; color: #fff; }
+input, select { padding: 8px; border: 1px solid #ccd3da; border-radius: 6px; font-size: 16px; }
+
+.navbar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; padding: 12px 24px; background: #2457c5; }
+.navbar a, .navbar button { color: #fff; text-decoration: none; border-color: #fff; background: transparent; }
+.navbar .logo { font-weight: 700; margin-right: auto; }
+
+.container { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
+.nova-tarefa { display: flex; gap: 8px; margin-bottom: 16px; }
+.nova-tarefa input { flex: 1; min-width: 0; }
+.filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.lista { list-style: none; padding: 0; display: grid; gap: 8px; }
+.tarefa { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 8px; padding: 12px; }
+.tarefa a { flex: 1; color: inherit; text-decoration: none; }
+.tarefa.feita a { text-decoration: line-through; color: #7b8691; }
+
+.form { display: grid; gap: 12px; max-width: 360px; }
+.form label { display: grid; gap: 4px; }
+.erro { color: #c62828; }
+.detalhe { background: #fff; border-radius: 10px; padding: 24px; }
